@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>花札バトル TCB</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="ui">
+        <div class="hpc">CPU: <span id="chp-v">20</span>
+            <div class="hpb">
+              <div id="chp-f" class="hpf"></div>
+            </div>
+        </div>
+
+        <div class="hpc">YOU: <span id="php-v">20</span>
+            <div class="hpb">
+              <div id="php-f" class="hpf"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stg">舞台: <span id="fm-n">--</span> | 山札: <span id="dc">--</span></div>
+
+  <button onclick="toggleRule()" class="btn-rule">役一覧を見る</button>
+    <div id="rule-modal" onclick="toggleRule()">
+        <div id="rule-content" onclick="event.stopPropagation()">
+
+            <h3>🎴 役一覧（3枚選んで作る）</h3>
+
+            <table>
+                <tr class="r-sss">
+                  <td>月下無双</td>
+                  <td>舞台月3枚</td>
+                  <td>10点 + 貫通</td>
+                </tr>
+                <tr class="r-s">
+                  <td>五光</td>
+                  <td>光札(light)3枚</td>
+                  <td>6点</td>
+                </tr>
+                <tr class="r-a">
+                  <td>猪鹿蝶</td>
+                  <td>6・7・10のタネ</td>
+                  <td>5点</td>
+                </tr>
+                <tr class="r-a">
+                  <td>短冊役</td>
+                  <td>赤短・青短など</td>
+                  <td>5点</td>
+                </tr>
+                <tr class="r-b">
+                  <td>花見/月見</td>
+                  <td>3or8光 + 9タネ</td>
+                  <td>4点</td>
+                </tr>
+                <tr class="r-b">
+                  <td>三つ揃い</td>
+                  <td>同じ月3枚</td>
+                  <td>3点</td>
+                </tr>
+                <tr class="r-c">
+                  <td>繋ぎ</td>
+                  <td>タネ/短2枚以上</td>
+                  <td>2点</td>
+                </tr>
+                <tr class="r-d">
+                  <td>カス</td>
+                  <td>カス3枚</td>
+                  <td>1点</td>
+                </tr>
+            </table>
+
+            <button onclick="toggleRule()" class="btn-close">閉じる</button>
+
+        </div>
+    </div>
+
+    <div id="c-area">
+        <div id="c-h" class="hand"></div>
+    </div>
+
+    <div id="log">準備完了</div>
+
+    <div id="c-area">
+      <div id="p-h" class="hand"></div>
+    </div>
+
+    <div id="ctrl">
+        <button class="btn-r" id="r-btn" onclick="draw()">最大５枚引き直し</button>
+        <button class="btn-a" id="a-btn" onclick="atk()">勝負！</button>
+        <button onclick="init()">試合をリセット</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
