@@ -81,7 +81,7 @@ function judge(cs){
     let r={r:"D",n:"役なし",d:0,p:0,b:(fm>0&&fm<3)?fm:0};
 
     if(same&&ms[0]==fM) r={r:"SSS",n:"月下無双",d:10,p:1,b:0};
-    else if(lc==3) r={r:"S",n:"五光",d:6,b:r.b};
+    else if(lc==3) r={r:"S",n:"三光",d:6,b:r.b};
     else if(cs.some(c=>c.m==10&&c.t=='tane')&&cs.some(c=>c.m==7&&c.t=='tane')&&cs.some(c=>c.m==6&&c.t=='tane')) r={r:"A",n:"猪鹿蝶",d:5,b:r.b};
     else if(cs.some(c=>c.m==1&&c.t=='light')&&cs.some(c=>c.m==2&&c.t=='tane')&&cs.some(c=>c.m==3&&c.t=='light')) r={r:"A",n:"表菅原",d:5,b:r.b};
     else if(tn==3&&([1,2,3].every(m=>ms.includes(m))||[6,9,10].every(m=>ms.includes(m)))) r={r:"A",n:"短冊役",d:5,b:r.b};
@@ -174,3 +174,4 @@ function toggleRule() {
 }
 
 init();
+
