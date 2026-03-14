@@ -1,223 +1,193 @@
-/* 変数定義: g=金, a=アクセント, sss~c=各ランクの色 */
-:root {
-    --g: #ffd700;
-    --a: #ff4500;
-    --bg: #1a1a1a;
-    --sss: #fff700;
-    --s: #ff3300;
-    --aa: #ffcc00;
-    --b: #00ffcc;
-    --c: #00ccff;
+/*変数定義:g=金,a=アクセント,sss~c=各ランクの色*/
+
+:root{
+--g:#ffd700;
+--a:#ff4500;
+--bg:#1a1a1a;
+--sss:#fff700;
+--s:#ff3300;
+--aa:#ffcc00;
+--b:#00ffcc;
+--c:#00ccff;
 }
-
-body {
-    background: var(--bg);
-    color: #fff;
-    font-family: sans-serif;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+body{
+background:var(--bg);
+color:#fff;
+font-family:sans-serif;
+margin:0;
+display:flex;
+flex-direction:column;
+align-items:center;
 }
-
-#ui {
-    width: 100%;
-    max-width: 600px;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    background: rgba(0,0,0,.5);
-    box-sizing: border-box;
+#ui{
+width:100%;
+max-width:600px;
+padding:20px;
+display:flex;
+justify-content:space-between;
+background:rgba(0,0,0,.5);
+box-sizing:border-box;
 }
-
-.hpc { /* HPコンテナ */
-    text-align: center;
-    width: 45%;
-    }
-
-.hpb { /* HPバー外枠 */
-    height: 20px; background: #444;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-top: 5px;
-  }
-
-.hpf { /* HP中身(Fill) */
-    height: 100%;
-    background: #2ecc71;
-    transition: width .5s;
-    width: 100%;
-    }
-
-.stg { /* 舞台情報 */
-    text-align: center;
-    color: var(--g);
-    font-weight: bold;
-    margin: 10px 0;
-    }
-
-.hand { /* 手札エリア */
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin: 10px 0;
-    min-height: 120px;
-    }
-
-.cd { /* カード(Card) */
-    width: 70px;
-    height: 105px;
-    background: #fff;
-    color: #333;
-    border-radius: 4px;
-    border: 2px solid #555;
-    position: relative;
-    cursor: pointer;
-    transition: transform .2s;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.hpc{/*HPコンテナ*/
+text-align:center;
+width:45%;
 }
-
-.cpu { /* CPUカード用 */
-    cursor: default;
-    background: #eee;
-    }
-
-.sel {/* 選択中(Selected) */
-    border: 4px solid var(--a);
-    transform: translateY(-10px);
-    }
-
-.hl {/* 舞台一致(Highlight) */
-    border-color: var(--g);
-    box-shadow:0 0 10px var(--g);
-    background:#fffdf0;
-    }
-
-.ml {/* 月ラベル(Month Label) */
-    font-size:1.1rem;
-    font-weight:bold;
-    }
-
-.tl {/* 種類ラベル(Type Label) */
-  font-size:0.6rem;
-  color:#666;
-  }
-
-#c-area {
-    width: 100%;
-    text-align: center;
-     padding:10px 0;
-   }
-
-#log {
-    width: 90%;
-    max-width: 500px;
-    height: 110px;
-    background: #000;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: .9rem;
-    overflow-y: auto;
-    color: #ddd;
-    border: 1px solid #333;
+.hpb{/*HPバー外枠*/
+height:20px;background:#444;
+border-radius:10px;
+overflow:hidden;
+margin-top:5px;
 }
-
-#ctrl {
-    margin:15px 0;
-    display: flex;
-    gap: 10px;
-  }
-
-button {
-    padding:12px 20px;
-    border:none;
-    border-radius:5px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-button:disabled {
-    opacity:0.3;
-    cursor: not-allowed;
-  }
-
-.btn-r {/* 引直ボタン */
-  background: #555;
-  color: #fff;
-  }
-
-.btn-a { /* 攻撃ボタン */
-  background: var(--a);
-  color: #fff;
-  }
-
-/* 役ランク別色付け */
-.r-sss {
-  color: var(--sss);
-  font-weight: bold;
-  text-decoration: underline;
+.hpf{/*HPの中身(Fill)*/
+height:100%;
+background:#2ecc71;
+transition:width .5s;
+width:100%;
 }
-
-.r-s {
-  color: var(--s);
-  font-weight: bold;
+.stg{/*舞台の情報*/
+text-align:center;
+color:var(--g);
+font-weight:bold;
+margin:10px 0;
 }
-
-.r-a {
-  color: var(--aa);
-  font-weight: bold;
+.hand{/*手札のエリア*/
+display:flex;
+justify-content:center;
+gap:8px;
+margin:10px 0;
+min-height:120px;
 }
-.r-b {
-  color: var(--b);
+.cd{/*カード(Card)*/
+width:70px;
+height:105px;
+background:#fff;
+color:#333;
+border-radius:4px;
+border:2px solid #555;
+position:relative;
+cursor:pointer;
+transition:transform .2s;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
 }
-
-.r-c {
-  color: var(--c);
+.cpu{/*CPUカード用*/
+cursor:default;
+background:#eee;
 }
-
-
-/* 役一覧の背景（暗くする） */
-#rule-modal {
-    display: none; /* 最初は隠す */
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
-    z-index: 100;
-    justify-content: center;
-    align-items: center;
+.sel{/*選択中(Selected)*/
+border:4px solid var(--a);
+transform:translateY(-10px);
 }
-
-/* 役一覧の中身の箱 */
-#rule-content {
-    background: #2c2c2c;
-    padding: 20px;
-    border-radius: 10px;
-    border: 2px solid var(--g);
-    width: 80%;
-    max-width: 400px;
+.hl{/*舞台一致(Highlight)*/
+border-color:var(--g);
+box-shadow:0 0 10px var(--g);
+background:#fffdf0;
 }
-
-#rule-content table {
-  width: 100%;
-  border-collapse: collapse;
+.ml{/*月のラベル(Month Label)*/
+font-size:1.1rem;
+font-weight:bold;
 }
-
-#rule-content td {
-  padding: 8px 5px;
-  border-bottom: 1px solid #444;
-  font-size: 0.9rem;
+.tl{/*種類のラベル(Type Label)*/
+font-size:0.6rem;
+color:#666;
 }
-
-.btn-rule {
-    background: #444;
-    color: #fff;
+#c-area{
+width:100%;
+text-align:center;
+padding:10px 0;
 }
-
-.btn-close {
-    margin-top: 15px;
-    width: 100%;
+#log{
+width:90%;
+max-width:500px;
+height:110px;
+background:#000;
+padding:10px;
+border-radius:5px;
+font-size:.9rem;
+overflow-y:auto;
+color:#ddd;
+border:1px solid #333;
+}
+#ctrl{
+margin:15px 0;
+display:flex;
+gap:10px;
+}
+button{
+padding:12px 20px;
+border:none;
+border-radius:5px;
+font-weight:bold;
+cursor:pointer;
+}
+button:disabled{
+opacity:0.3;
+cursor:not-allowed;
+}
+.btn-r{/*引直しのボタン*/
+background:#555;
+color:#fff;
+}
+.btn-a{/*攻撃のボタン*/
+background:var(--a);
+color:#fff;
+}
+/*役ランク別の色付け*/
+.r-sss{
+color:var(--sss);
+font-weight:bold;
+text-decoration:underline;
+}
+.r-s{
+color:var(--s);
+font-weight:bold;
+}
+.r-a{
+color:var(--aa);
+font-weight:bold;
+}
+.r-b{
+color:var(--b);
+}
+.r-c{
+color:var(--c);
+}
+/*役一覧の背景（暗くする）*/
+#rule-modal{
+display:none;/*最初は隠す*/
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.8);
+z-index:100;
+justify-content:center;
+align-items:center;
+}
+/*役一覧の中身の箱*/
+#rule-content{
+background:#2c2c2c;
+padding:20px;
+border-radius:10px;
+border:2px solid var(--g);
+width:80%;
+max-width:400px;
+}
+#rule-content table{
+width:100%;
+border-collapse:collapse;
+}
+#rule-content td{
+padding:8px 5px;
+border-bottom:1px solid #444;
+font-size:0.9rem;
+}
+.btn-rule{
+background:#444;
+color:#fff;
+}
+.btn-close{
+margin-top:15px;
+width:100%;
 }
