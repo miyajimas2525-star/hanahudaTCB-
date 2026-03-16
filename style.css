@@ -1,7 +1,7 @@
 /* 変数定義:g=金,a=アクセント,sss~c=各ランクの色*/
 :root{
     --g: #d4af37;
-    --a: #cd5c5c;
+    --a: red;
     --bg: #1e1e1e;;
     --sss: #fffacd;
     --s: #f08080;
