@@ -1,44 +1,40 @@
 //d=山札, pHP/cHP=体力, fM=舞台月, pH/cH=手札, sId=選択ID, end=終了フラグ, red=引直済フラグ
 let d=[],pHP=20,cHP=20,fM=1,pH=[],cH=[],sId=new Set(),end=0,red=0;
 
-//山札の補充
-
+// 山札の補充
 function rep(){
-    if(d.length<10){
-        console.log("---山札を補充します---");
-        const n=[];
-        //月ごとのカード構成(1月〜12月)
-        //花札の標準的な枚数構成(光/種/短/カスの内訳)を配列で管理
-        const mt=[
-            ['light','tan','kasu','kasu'], //1月(松)
-            ['tane','tan','kasu','kasu'],  //2月(梅)
-            ['light','tan','kasu','kasu'], //3月(桜)
-            ['tane','tan','kasu','kasu'],  //4月(藤)
-            ['tane','tan','kasu','kasu'],  //5月(菖蒲)
-            ['tane','tan','kasu','kasu'],  //6月(牡丹)
-            ['tane','tan','kasu','kasu'],  //7月(萩)
-            ['light','tane','kasu','kasu'],//8月(月)
-            ['tane','tan','kasu','kasu'],  //9月(菊)
-            ['tane','tan','kasu','kasu'],  //10月(紅葉)
-            ['light','tane','tan','kasu'], //11月(柳)
-            ['light','kasu','kasu','kasu'] //12月(桐)
-        ];
+  if(d.length<10){
+    console.log("---山札を補充（底に追加）します---");
+    const n=[];
 
+    const mt=[
+      ['light','tan','kasu','kasu'],
+      ['tane','tan','kasu','kasu'],
+      ['light','tan','kasu','kasu'],
+      ['tane','tan','kasu','kasu'],
+      ['tane','tan','kasu','kasu'],
+      ['tane','tan','kasu','kasu'],
+      ['tane','tan','kasu','kasu'],
+      ['light','tane','kasu','kasu'],
+      ['tane','tan','kasu','kasu'],
+      ['tane','tan','kasu','kasu'],
+      ['light','tane','tan','kasu'],
+      ['light','kasu','kasu','kasu']
+      ];
 
-        for(let m=1;m<=12;m++){
+      const ids=new Set([...pH,...cH].map(c=>c.id));
 
-            for(let i=0;i<4;i++){
-                n.push({
-                    //月と連番を組み合わせてIDにして重複するのを防止する
-                    id:`${m}-${i}`,
-                    m:m, //月(1-12)
-                    t:mt[m-1][i] //定義した配列から札の種類を割り当てる
-                });
-            }
+      for(let m=1;m<=12;m++){
+        for(let i=0;i<4;i++){
+          const cid=`${m}-${i}`;
+          if(!ids.has(cid)&&!d.some(c=>c.id===cid)){
+            n.push({id:cid,m:m,t:mt[m-1][i]});
+          }
         }
+      }
 
-        d=[...d,...n.sort(()=>Math.random()-.5)];
-        console.log("補充後の山札枚数:",d.length);
+      d=[...n.sort(()=>Math.random()-0.5),...d];
+      console.log("補充後の山札枚数:",d.length);
     }
 }
 
@@ -68,6 +64,7 @@ function init(){
     sId.clear();
     ren(0);
     upd();
+    document.getElementById('a-btn').disabled = false;
     document.getElementById('r-btn').disabled=0;
     msg("ゲーム開始！");
 }
