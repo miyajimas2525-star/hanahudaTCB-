@@ -1,6 +1,7 @@
 //d=山札, pHP/cHP=体力, fM=舞台月, pH/cH=手札, sId=選択ID, end=終了フラグ, red=引直済フラグ
 let d=[],pHP=20,cHP=20,fM=1,pH=[],cH=[],sId=new Set(),end=0,red=0;
 
+const u=new URLSearchParams(window.location.search),df=parseInt(u.get('diff'))||0;
 // 山札の補充
 function rep(){
   if(d.length<10){
@@ -195,9 +196,36 @@ async function atk(){
 
     const ab=document.getElementById('a-btn'),rb=document.getElementById('r-btn');
     ab.disabled=rb.disabled=1;
+    const u=new URLSearchParams(window.location.search),df=parseInt(u.get('diff'))||0;
+    cH.sort((a,b)=>{
+        const getScore=(card)=>{
+            let s = 0;
+            // 舞台月(fM)は無条件で最優先（ボーナス確定のため）
+            if(card.m===fM){
+              s+=1000;
+            }
 
-    cH.sort((a,b)=>(a.m==fM?-1:1));
-    const pCs=pH.filter(c=>sId.has(c.id)),cCs=cH.slice(0,3);
+            // 三つ揃い(同じ月)を狙う：手札(5枚)の中に同じ月が何枚あるか
+            const mCount=cH.filter(c=>c.m===card.m).length;
+            if(mCount>=2) {
+              s+=(mCount*50); // 2枚以上なら期待値アップ
+            }
+
+            // 三丁(同じ種類)を狙う：手札の中に同じ種類(tane/tan)が何枚あるか
+            if (card.t!=='kasu') {
+                const tCount=cH.filter(c=>c.t===card.t).length;
+                s+=(tCount*20); // 種類が揃いそうなら優先
+            }
+
+          
+            return s;
+        };
+        // スコアが高い（強い）順に並び替え
+        return getScore(b)-getScore(a);
+    });
+
+    // ソートされたcHの「最初から3枚」をCPUの攻撃札として確定
+    const pCs=pH.filter(c=>sId.has(c.id)), cCs=cH.slice(0,3);
 
     ren(1);
     const pR=judge(pCs),cR=judge(cCs);
