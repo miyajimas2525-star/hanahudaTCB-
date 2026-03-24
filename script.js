@@ -1,7 +1,6 @@
 //d=山札, pHP/cHP=体力, fM=舞台月, pH/cH=手札, sId=選択ID, end=終了フラグ, red=引直済フラグ
 let d=[],pHP=20,cHP=20,fM=1,pH=[],cH=[],sId=new Set(),end=0,red=0;
 
-const u=new URLSearchParams(window.location.search),df=parseInt(u.get('diff'))||0;
 // 山札の補充
 function rep(){
   if(d.length<10){
@@ -196,7 +195,7 @@ async function atk(){
 
     const ab=document.getElementById('a-btn'),rb=document.getElementById('r-btn');
     ab.disabled=rb.disabled=1;
-    const u=new URLSearchParams(window.location.search),df=parseInt(u.get('diff'))||0;
+ 
     cH.sort((a,b)=>{
         const getScore=(card)=>{
             let s = 0;
