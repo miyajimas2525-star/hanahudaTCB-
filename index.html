@@ -19,16 +19,16 @@
     <div class="stg">舞台: <span id="fm-n">--</span> | 山札: <span id="dc">--</span></div>
 
       <div style="display: flex; gap: 10px; margin-bottom: 10px; width: 100%; max-width: 500px; justify-content: center;">
-          <button onclick="tgl(); tab('tab-how');" class="btn-rule" style="flex: 1;">遊び方</button>
-          <button onclick="tgl(); tab('tab-yaku');" class="btn-rule" style="flex: 1;">役一覧</button>
+          <button onclick="toggleModal(); switchTab('tab-how');" class="btn-rule" style="flex: 1;">遊び方</button>
+          <button onclick="toggleModal(); switchTab('tab-yaku');" class="btn-rule" style="flex: 1;">役一覧</button>
       </div>
 
-      <div id="rule-modal" onclick="tgl()">
+      <div id="rule-modal" onclick="toggleModal()">
         <div id="rule-content" onclick="event.stopPropagation()">
 
             <div class="tab-menu">
-                <button onclick="tab('tab-how')">遊び方</button>
-                <button onclick="tab('tab-yaku')">役一覧</button>
+                <button onclick="switchTab('tab-how')">遊び方</button>
+                <button onclick="switchTab('tab-yaku')">役一覧</button>
             </div>
 
             <div id="tab-yaku" class="tab-body">
@@ -94,7 +94,7 @@
               </tr>
               <tr class="r-d">
                   <td>カス</td>
-                  <td>カスが3枚</td>
+                  <td>カス(kasu)が3枚</td>
                   <td>1点</td>
               </tr>
           </tbody>
@@ -190,7 +190,7 @@
     </div>
 </div>
 
-            <button onclick="tgl()" class="btn-close">閉じる</button>
+            <button onclick="toggleModal()" class="btn-close">閉じる</button>
         </div>
     </div>
 
@@ -205,9 +205,9 @@
    </div>
 
     <div id="ctrl">
-        <button onclick="init()">試合リセット</button>
-        <button class="btn-r" id="r-btn" onclick="draw()">最大五枚引き直し</button>
-        <button class="btn-a" id="a-btn" onclick="atk()">勝負！</button>
+        <button onclick="initializeGame()">試合リセット</button>
+        <button class="btn-r" id="r-btn" onclick="redrawCards()">最大五枚引き直し</button>
+        <button class="btn-a" id="a-btn" onclick="executeAttack()">勝負！</button>
 
     </div>
 
