@@ -19,11 +19,11 @@
     <div class="stg">舞台: <span id="fm-n">--</span> | 山札: <span id="dc">--</span></div>
 
       <div style="display: flex; gap: 10px; margin-bottom: 10px; width: 100%; max-width: 500px; justify-content: center;">
-          <button onclick="toggleModal(); switchTab('tab-how');" class="btn-rule" style="flex: 1;">遊び方</button>
-          <button onclick="toggleModal(); switchTab('tab-yaku');" class="btn-rule" style="flex: 1;">役一覧</button>
+          <button onclick="toggleRuleModal(); switchTab('tab-how');" class="btn-rule" style="flex: 1;">遊び方</button>
+          <button onclick="toggleRuleModal(); switchTab('tab-yaku');" class="btn-rule" style="flex: 1;">役一覧</button>
       </div>
 
-      <div id="rule-modal" onclick="toggleModal()">
+      <div id="rule-modal" onclick="toggleRuleModal()">
         <div id="rule-content" onclick="event.stopPropagation()">
 
             <div class="tab-menu">
@@ -190,7 +190,7 @@
     </div>
 </div>
 
-            <button onclick="toggleModal()" class="btn-close">閉じる</button>
+            <button onclick="toggleRuleModal()" class="btn-close">閉じる</button>
         </div>
     </div>
 
