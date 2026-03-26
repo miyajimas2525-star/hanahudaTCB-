@@ -27,281 +27,307 @@ const SCORE_SANCHO=3;
 const SCORE_TSUNAGI=2;
 const SCORE_KASU=1;
 
+// 山札を混ぜる関数 (フィッシャー–イェーツ)
+function shuffle(array) {
+    console.log("---Shuffle Start---");
+    for(let i=array.length-1;i>0;i--){
+        const r=Math.floor(Math.random()*(i+1));
+        [array[i],array[r]]=[array[r], array[i]];
+    }
+    return array;
+}
+
 //山札の補充
 function replenishDeck(){
-    if (deck.length>=10){
-      return;
-    }
+    if(deck.length>=10){
+        return;
+    }
+    console.log("---Replenishing Deck---");
 
-    const cardTemplates=[
-        ['light','tan','kasu','kasu'],['tane','tan','kasu','kasu'],
-        ['light','tan','kasu','kasu'],['tane','tan','kasu','kasu'],
-        ['tane','tan','kasu','kasu'],['tane','tan','kasu','kasu'],
-        ['tane','tan','kasu','kasu'],['light','tane','kasu','kasu'],
-        ['tane','tan','kasu','kasu'],['tane','tan','kasu','kasu'],
-        ['light','tane','tan','kasu'],['light','kasu','kasu','kasu']
-    ];
+    const cardTemplates=[
+        ['light','tan','kasu','kasu'],['tane','tan','kasu','kasu'],
+        ['light','tan','kasu','kasu'],['tane','tan','kasu','kasu'],
+        ['tane','tan','kasu','kasu'],['tane','tan','kasu','kasu'],
+        ['tane','tan','kasu','kasu'],['light','tane','kasu','kasu'],
+        ['tane','tan','kasu','kasu'],['tane','tan','kasu','kasu'],
+        ['light','tane','tan','kasu'],['light','kasu','kasu','kasu']
+    ];
 
-    const currentHandCardIds=new Set([...playerHand, ...cpuHand].map(card => card.id));
-    const newCards=[];
+    const currentHandCardIds=new Set([...playerHand, ...cpuHand].map(card=>card.id));
+    const newCards=[];
 
-    for (let month=1;month<=12;month++) {
-        for (let i=0;i<4;i++) {
-            const cardId=`${month}-${i}`;
-            if(!currentHandCardIds.has(cardId)&&!deck.some(card=>card.id===cardId)){
-                newCards.push({ id: cardId, month: month, type: cardTemplates[month-1][i]});
-            }
-        }
-    }
-    deck=[...newCards.sort(()=>Math.random()-0.5),...deck];
+    for(let month=1;month<=12;month++){
+        for (let i=0;i<4;i++){
+            const cardId=`${month}-${i}`;
+            if(!currentHandCardIds.has(cardId)&&!deck.some(card=>card.id===cardId)){
+                newCards.push({id: cardId,month: month,type: cardTemplates[month-1][i]});
+            }
+        }
+    }
+    shuffle(newCards);
+    deck=[...newCards,...deck];
+    console.log(`Deck Refilled. Current Deck Size: ${deck.length}`);
 }
 
 //描画処理
 function render(showCpuHand){
-    const playerHandDisplay=document.getElementById('p-h');
-    const cpuHandDisplay=document.getElementById('c-h');
-    if (!playerHandDisplay||!cpuHandDisplay){
-     return;
-   }
+    const playerHandDisplay=document.getElementById('p-h');
+    const cpuHandDisplay=document.getElementById('c-h');
+    if(!playerHandDisplay||!cpuHandDisplay){
+      return;
+    }
 
-    playerHandDisplay.innerHTML='';
-    cpuHandDisplay.innerHTML='';
+    playerHandDisplay.innerHTML='';
+    cpuHandDisplay.innerHTML='';
 
-    playerHand.forEach(card=>{
-        const cardElement=document.createElement('div');
-        const isSelected=selectedIds.has(card.id);
-        const isHighlight=card.month===fieldMonth;
-        cardElement.className=`cd ${isSelected?'sel' : ''} ${isHighlight?'hl' : ''}`;
-        cardElement.innerHTML=`<div class="ml">${card.month}</div><div class="tl">${card.type}</div>`;
-        cardElement.onclick=()=>{
-            if (!isGameOver) {
-                selectedIds.has(card.id)?selectedIds.delete(card.id) : selectedIds.add(card.id);
-                render(showCpuHand);
-            }
-        };
-        playerHandDisplay.appendChild(cardElement);
-    });
+    playerHand.forEach(card=>{
+        const cardElement=document.createElement('div');
+        const isSelected=selectedIds.has(card.id);
+        const isHighlight=card.month===fieldMonth;
+        cardElement.className=`cd ${isSelected?'sel' : ''} ${isHighlight?'hl' : ''}`;
+        cardElement.innerHTML=`<div class="ml">${card.month}</div><div class="tl">${card.type}</div>`;
+        cardElement.onclick=()=>{
+            if(!isGameOver) {
+                selectedIds.has(card.id)?selectedIds.delete(card.id) : selectedIds.add(card.id);
+                console.log(`Card Clicked: ${card.id}. Selected Total: ${selectedIds.size}`);
+                render(showCpuHand);
+            }
+        };
+        playerHandDisplay.appendChild(cardElement);
+    });
 
-    cpuHand.forEach((card,index)=>{
-        const cardElement=document.createElement('div');
-        cardElement.className=`cd cpu`;
-        if (showCpuHand) {
-            if (card.month===fieldMonth){
-              cardElement.classList.add('hl');
-            }
-            if (index<3){
-              cardElement.style.border="2px solid var(--a)";
-            }
-            cardElement.innerHTML=`<div class="ml">${card.month}</div><div class="tl">${card.type}</div>`;
-        } else {
-            cardElement.style.background="#444";
-        }
-        cpuHandDisplay.appendChild(cardElement);
-    });
+    cpuHand.forEach((card,index)=>{
+        const cardElement=document.createElement('div');
+        cardElement.className=`cd cpu`;
+        if(showCpuHand) {
+            if(card.month===fieldMonth){
+              cardElement.classList.add('hl');
+            }
+            if(index<3){
+              cardElement.style.border="2px solid var(--a)";
+            }
+            cardElement.innerHTML=`<div class="ml">${card.month}</div><div class="tl">${card.type}</div>`;
+        } else{
+            cardElement.style.background="#444";
+        }
+        cpuHandDisplay.appendChild(cardElement);
+    });
 }
 
 //ゲーム開始/リセット処理
 function initializeGame(){
-    playerHp=cpuHp=MAX_HP;
-    isGameOver=hasRedrawn=false;
-    fieldMonth=Math.floor(Math.random()*12)+1;
+    console.log("===Game Initialize===");
+    playerHp=cpuHp=MAX_HP;
+    isGameOver=hasRedrawn=false;
+    fieldMonth=Math.floor(Math.random()*12)+1;
+    console.log(`Field Month: ${fieldMonth} (${MONTH_NAMES[fieldMonth]})`);
 
-    const fmDisplay=document.getElementById('fm-n');
-    if (fmDisplay){
-      fmDisplay.innerText=`${fieldMonth}(${MONTH_NAMES[fieldMonth]})`;
-    }
+    const fmDisplay=document.getElementById('fm-n');
+    if(fmDisplay){
+      fmDisplay.innerText=`${fieldMonth}(${MONTH_NAMES[fieldMonth]})`;
+    }
 
-    deck=[];
-    replenishDeck();
-    playerHand=[];
-    cpuHand = [];
-    for (let i=0;i<HAND_COUNT;i++){
-        playerHand.push(deck.pop());
-        cpuHand.push(deck.pop());
-    }
+    deck=[];
+    replenishDeck();
+    playerHand=[];
+    cpuHand=[];
+    for(let i=0;i<HAND_COUNT;i++){
+        playerHand.push(deck.pop());
+        cpuHand.push(deck.pop());
+    }
+    console.log("Hands dealt.",{ player: playerHand, cpu: cpuHand });
 
-    selectedIds.clear();
-    render(0);
-    updateUI();
-
-    document.getElementById('a-btn').disabled=false;
-    document.getElementById('r-btn').disabled=false;
-    showMessage("ゲーム開始！勝負する3枚を選んでね。");
+    selectedIds.clear();
+    render(0);
+    updateUI();
+    document.getElementById('a-btn').disabled=false;
+    document.getElementById('r-btn').disabled=false;
+    showMessage("ゲーム開始！勝負する3枚を選んでね。");
 }
 
 // 引き直し
 function redrawCards(){
-    if (isGameOver||hasRedrawn||selectedIds.size===0){
-      return;
-    }
+    if(isGameOver||hasRedrawn||selectedIds.size===0){
+      return;
+    }
 
-    playerHand=playerHand.filter(card=>!selectedIds.has(card.id));
-    while(playerHand.length<HAND_COUNT){
-        replenishDeck();
-        playerHand.push(deck.pop());
-    }
+    console.log(`---Redrawing Cards. Discarding: ${Array.from(selectedIds)}---`);
+    playerHand=playerHand.filter(card=>!selectedIds.has(card.id));
+    while(playerHand.length<HAND_COUNT){
+        replenishDeck();
+        playerHand.push(deck.pop());
+    }
 
-    hasRedrawn=true;
-    document.getElementById('r-btn').disabled=true;
-    selectedIds.clear();
+    hasRedrawn=true;
+    document.getElementById('r-btn').disabled=true;
+    selectedIds.clear();
+    console.log("New Player Hand:", playerHand);
 
-    render(0);
-    updateUI();
-    showMessage("引き直しました。勝負する3枚を選んでね！");
+    render(0);
+    updateUI();
+    showMessage("引き直しました。勝負する3枚を選んでね！");
 }
 
 //役判定
 function judge(cards){
-    const months=cards.map(c=>c.month);
-    const types=cards.map(c=>c.type);
-    const isSameMonth=months.every(m=>m==months[0]);
-    const lightCount=types.filter(t=>t=='light').length;
-    const taneCount=types.filter(t=>t=='tane').length;
-    const tanCount=types.filter(t=>t=='tan').length;
-    const kasuCount=types.filter(t=>t=='kasu').length;
-    const fieldMonthMatchCount=months.filter(m=>m==fieldMonth).length;
+    const months=cards.map(c=>c.month);
+    const types=cards.map(c=>c.type);
+    const isSameMonth=months.every(m=>m==months[0]);
+    const lightCount=types.filter(t=>t=='light').length;
+    const taneCount=types.filter(t=>t=='tane').length;
+    const tanCount=types.filter(t=>t=='tan').length;
+    const kasuCount=types.filter(t=>t=='kasu').length;
+    const fieldMonthMatchCount=months.filter(m=>m==fieldMonth).length;
 
-    let result={ name: "役なし", damage: 0, isSpecial: 0, bonus: (fieldMonthMatchCount>0&&fieldMonthMatchCount<3)?fieldMonthMatchCount : 0 };
+    let result={ name: "役なし", damage: 0, isSpecial: 0, bonus: (fieldMonthMatchCount>0&&fieldMonthMatchCount<3)?fieldMonthMatchCount : 0 };
 
-    if(isSameMonth&&months[0]==fieldMonth){
-        result={ name: "月下無双", damage: SCORE_GEKKA_MUSO, isSpecial: 1, bonus: 0 };
-    } else if(lightCount == 3){
-        result={ name: "三光", damage: SCORE_SANKO, bonus: result.bonus };
-    } else if(
-        cards.some(c=>c.month==10&&c.type=='tane')&&
-        cards.some(c=>c.month==7&&c.type=='tane')&&
-        cards.some(c=>c.month==6&&c.type=='tane')
-    ){
-        result={ name: "猪鹿蝶", damage: SCORE_INOSHIKACHO, bonus: result.bonus };
-    }else if(
-        cards.some(c=>c.month==1&&c.type=='light')&&
-        cards.some(c=>c.month==2&&c.type=='tane')&&
-        cards.some(c=>c.month==3&&c.type=='light')
-    ){
-        result={ name: "表菅原", damage: SCORE_OMOTE_SUGAWARA, bonus: result.bonus };
-    } else if(tanCount==3&&([1,2,3].every(m=>months.includes(m))||[6,9,10].every(m=>months.includes(m)))){
-        result={ name: "短冊役", damage: SCORE_TANZAKU, bonus: result.bonus };
-    } else if(cards.some(c => c.month == 3 && c.type == 'light') && cards.some(c => c.month == 9 && c.type == 'tane')) {
-        result={ name: "花見酒", damage: SCORE_HANAMIZAKE, bonus: result.bonus };
-    } else if(cards.some(c=>c.month==8&&c.type=='light')&&cards.some(c=>c.month==9&&c.type=='tane')){
-        result={ name: "月見酒", damage: SCORE_TSUKIMIZAKE, bonus: result.bonus };
-    } else if(isSameMonth){
-        result={ name: "三つ揃い", damage: SCORE_MITSU_ZOROI, bonus: 0 };
-    } else if(taneCount == 3||tanCount == 3){
-        result={ name: "三丁", damage: SCORE_SANCHO, bonus: result.bonus };
-    } else if(taneCount>=2||tanCount>= 2){
-        result={ name: "繋ぎ", damage: SCORE_TSUNAGI, bonus: result.bonus };
-    } else if(kasuCount==3) {
-        result={ name: "カス", damage: SCORE_KASU, bonus: result.bonus };
-    }
-    return result;
+    if(isSameMonth&&months[0]==fieldMonth){
+        result={ name: "月下無双", damage: SCORE_GEKKA_MUSO, isSpecial: 1, bonus: 0 };
+    }else if(lightCount == 3){
+        result={ name: "三光", damage: SCORE_SANKO, bonus: result.bonus };
+    }else if(
+        cards.some(c=>c.month==10&&c.type=='tane')&&
+        cards.some(c=>c.month==7&&c.type=='tane')&&
+        cards.some(c=>c.month==6&&c.type=='tane')
+    ){
+        result={ name: "猪鹿蝶", damage: SCORE_INOSHIKACHO, bonus: result.bonus };
+    }else if(
+        cards.some(c=>c.month==1&&c.type=='light')&&
+        cards.some(c=>c.month==2&&c.type=='tane')&&
+        cards.some(c=>c.month==3&&c.type=='light')
+    ){
+        result={ name: "表菅原", damage: SCORE_OMOTE_SUGAWARA, bonus: result.bonus };
+    }else if(tanCount==3&&([1,2,3].every(m=>months.includes(m))||[6,9,10].every(m=>months.includes(m)))){
+        result={ name: "短冊役", damage: SCORE_TANZAKU, bonus: result.bonus };
+    }else if(cards.some(c => c.month == 3 && c.type == 'light') && cards.some(c => c.month == 9 && c.type == 'tane')) {
+        result={ name: "花見酒", damage: SCORE_HANAMIZAKE, bonus: result.bonus };
+    }else if(cards.some(c=>c.month==8&&c.type=='light')&&cards.some(c=>c.month==9&&c.type=='tane')){
+        result={ name: "月見酒", damage: SCORE_TSUKIMIZAKE, bonus: result.bonus };
+    }else if(isSameMonth){
+        result={ name: "三つ揃い", damage: SCORE_MITSU_ZOROI, bonus: 0 };
+    }else if(taneCount == 3||tanCount == 3){
+        result={ name: "三丁", damage: SCORE_SANCHO, bonus: result.bonus };
+    }else if(taneCount>=2||tanCount>= 2){
+        result={ name: "繋ぎ", damage: SCORE_TSUNAGI, bonus: result.bonus };
+    }else if(kasuCount==3) {
+        result={ name: "カス", damage: SCORE_KASU, bonus: result.bonus };
+    }
+    console.log(`Judged: ${result.name}. Base:${result.damage}, Bonus:${result.bonus}`);
+    return result;
 }
 
 //攻撃処理
 async function executeAttack(){
-    if(selectedIds.size!==3||isGameOver){
-       return;
-     }
+    if(selectedIds.size!==3||isGameOver){
+      return;
+    }
 
-    const attackBtn=document.getElementById('a-btn'), redrawBtn=document.getElementById('r-btn');
-    attackBtn.disabled=redrawBtn.disabled=true;
+    console.log("===Attack Phase Started===");
+    const attackBtn=document.getElementById('a-btn'), redrawBtn=document.getElementById('r-btn');
+    attackBtn.disabled=redrawBtn.disabled=true;
 
-    //CPUの思考（ソート）
-    cpuHand.sort((cardA,cardB)=>{
-        const getEvaluationScore=(card)=>{
-            let score=0;
-            if(card.month===fieldMonth){
-              score+=1000;
-            }
-            const monthMatchCount=cpuHand.filter(c=>c.month===card.month).length;
-            if(monthMatchCount>=2){
-               score+=(monthMatchCount*50);
-            }
-            if(card.type!=='kasu'){
-                const typeMatchCount=cpuHand.filter(c=>c.type===card.type).length;
-                score+=(typeMatchCount*20);
-            }
-            return score;
-        };
-        return getEvaluationScore(cardB)-getEvaluationScore(cardA);
-    });
+    //CPUの思考
+    console.log("CPU is thinking...");
+    cpuHand.sort((cardA,cardB)=>{
+        const getEvaluationScore=(card)=>{
+            let score=0;
+            if(card.month===fieldMonth){
+              score+=1000;
+            }
+            const monthMatchCount=cpuHand.filter(c=>c.month===card.month).length;
+            if(monthMatchCount>=2){
+              score+=(monthMatchCount*50);
+            }
+            if(card.type!=='kasu'){
+                const typeMatchCount=cpuHand.filter(c=>c.type===card.type).length;
+                score+=(typeMatchCount*20);
+            }
+            return score;
+        };
+        return getEvaluationScore(cardB)-getEvaluationScore(cardA);
+    });
 
-    const playerSelectedCards=playerHand.filter(c=>selectedIds.has(c.id));
-    const cpuSelectedCards=cpuHand.slice(0,3);
+    const playerSelectedCards=playerHand.filter(c=>selectedIds.has(c.id));
+    const cpuSelectedCards=cpuHand.slice(0,3);
+    console.log("Selected Cards:",{ player: playerSelectedCards, cpu: cpuSelectedCards });
 
-    render(1); // CPUの手札公開
-    const playerResult=judge(playerSelectedCards), cpuResult=judge(cpuSelectedCards);
-    const playerTotalScore=playerResult.damage+playerResult.bonus, cpuTotalScore=cpuResult.damage+cpuResult.bonus;
+    render(1);
+    const playerResult=judge(playerSelectedCards), cpuResult=judge(cpuSelectedCards);
+    const playerTotalScore=playerResult.damage+playerResult.bonus, cpuTotalScore=cpuResult.damage+cpuResult.bonus;
 
-    let damageToCpu=playerResult.isSpecial?playerResult.damage : Math.max(0,playerTotalScore-cpuTotalScore);
-    let damageToPlayer=cpuResult.isSpecial?cpuResult.damage : Math.max(0,cpuTotalScore-playerTotalScore);
+    let damageToCpu=playerResult.isSpecial?playerResult.damage : Math.max(0,playerTotalScore-cpuTotalScore);
+    let damageToPlayer=cpuResult.isSpecial?cpuResult.damage : Math.max(0,cpuTotalScore-playerTotalScore);
 
-    showMessage(`${playerResult.name}(${playerTotalScore})vs${cpuResult.name}(${cpuTotalScore})<br>CPUに${damageToCpu}ダメージ！`);
-    cpuHp-=damageToCpu;
-    updateUI();
+    console.log(`Score Table->Player: ${playerTotalScore},CPU: ${cpuTotalScore}`);
+    console.log(`Damage Result->To CPU: ${damageToCpu},To Player: ${damageToPlayer}`);
 
-    if(cpuHp<=0){
-        isGameOver=true;
-        showMessage(`<b style="color:var(--g);font-size:1.4rem">勝ち！</b>`);
-        return;
-    }
+    showMessage(`${playerResult.name}(${playerTotalScore})vs${cpuResult.name}(${cpuTotalScore})<br>CPUに${damageToCpu}ダメージ！`);
+    cpuHp-=damageToCpu;
+    updateUI();
 
-    await new Promise(resolve=>setTimeout(resolve,1200));
-    playerHp-=damageToPlayer;
-    updateUI();
-    showMessage(`${playerResult.name}vs${cpuResult.name}<br>${damageToPlayer}の反撃を受けた！`);
+    if(cpuHp<=0){
+        console.log("Result: Player Victory!");
+        isGameOver=true;
+        showMessage(`<b style="color:var(--g);font-size:1.4rem">勝ち！</b>`);
+        return;
+    }
 
-    if(playerHp<=0){
-        isGameOver=true;
-        showMessage(`<b style="color:red;font-size:1.4rem">負け...</b>`);
-        return;
-    }
+    await new Promise(resolve=>setTimeout(resolve,1200));
+    playerHp-=damageToPlayer;
+    updateUI();
+    showMessage(`${playerResult.name}vs${cpuResult.name}<br>${damageToPlayer}の反撃を受けた！`);
 
-    await new Promise(resolve=>setTimeout(resolve,1200));
+    if(playerHp<=0){
+        console.log("Result: CPU Victory!");
+        isGameOver=true;
+        showMessage(`<b style="color:red;font-size:1.4rem">負け...</b>`);
+        return;
+    }
 
-    //次ターン準備
-    replenishDeck();
-    playerHand=[];
-    cpuHand=[];
-    for (let i=0;i<HAND_COUNT;i++){
-        replenishDeck();
-        playerHand.push(deck.pop());
-        cpuHand.push(deck.pop());
-    }
+    await new Promise(resolve=>setTimeout(resolve,1200));
 
-    hasRedrawn=false;
-    attackBtn.disabled=false;
-    redrawBtn.disabled=false;
-    selectedIds.clear();
-    render(0);
-    updateUI();
-    showMessage("次ターン：3枚選んでね");
+    replenishDeck();
+    playerHand=[];
+    cpuHand=[];
+    for(let i=0;i<HAND_COUNT;i++){
+        playerHand.push(deck.pop());
+        cpuHand.push(deck.pop());
+    }
+
+    hasRedrawn=false;
+    attackBtn.disabled=false;
+    redrawBtn.disabled=false;
+    selectedIds.clear();
+    render(0);
+    updateUI();
+    console.log("---Next Turn Ready---");
+    showMessage("次ターン：3枚選んでね");
 }
 
 // UI更新
 function updateUI(){
-    document.getElementById('chp-v').innerText=Math.max(0,cpuHp);
-    document.getElementById('php-v').innerText=Math.max(0,playerHp);
-    document.getElementById('chp-f').style.width=(Math.max(0,cpuHp)/MAX_HP*100)+"%";
-    document.getElementById('php-f').style.width=(Math.max(0,playerHp)/MAX_HP*100)+"%";
-    document.getElementById('dc').innerText=deck.length;
+    document.getElementById('chp-v').innerText=Math.max(0,cpuHp);
+    document.getElementById('php-v').innerText=Math.max(0,playerHp);
+    document.getElementById('chp-f').style.width=(Math.max(0,cpuHp)/MAX_HP*100)+"%";
+    document.getElementById('php-f').style.width=(Math.max(0,playerHp)/MAX_HP*100)+"%";
+    document.getElementById('dc').innerText=deck.length;
 }
 
 function showMessage(msgText){
-   document.getElementById('log').innerHTML=msgText;
- }
+   document.getElementById('log').innerHTML=msgText;
+}
 
 function toggleRuleModal(){
-    const modal=document.getElementById('rule-modal');
-    modal.style.display=(modal.style.display==='flex')?'none' : 'flex';
+    const modal=document.getElementById('rule-modal');
+    modal.style.display=(modal.style.display==='flex')?'none' : 'flex';
 }
 
 function switchTab(tabId){
-    document.querySelectorAll('.tab-body').forEach(el=>el.style.display='none');
-    const targetTab=document.getElementById(tabId);
-    if (targetTab){
-      targetTab.style.display='block';
-    }
+    document.querySelectorAll('.tab-body').forEach(el=>el.style.display='none');
+    const targetTab=document.getElementById(tabId);
+    if (targetTab){
+      targetTab.style.display='block';
+    }
 }
 
 // 初回実行
