@@ -1,5 +1,8 @@
 ゲームの概要
 伝統的な花札の要素を簡略化し、「3枚のカードを選んで役を作る」という戦略性にフォーカスした対戦型ゲームです。プレイヤーとCPUが互いのHP（20）を削り合い、先に相手の体力を0にした方が勝利となります。
+GitHub Pages(ゲームはこちらから遊べます)
+https://miyajimas2525-star.github.io/hanahudaTCB-/
+
 <img width="500" height="1000" alt="1000009996" src="https://github.com/user-attachments/assets/fa4c7733-5ba6-4ccc-9408-1db0a1cb400f" />
 
 特徴・こだわった点：
